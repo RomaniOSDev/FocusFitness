@@ -25,18 +25,7 @@ struct CreateWorkoutView: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
-                        // Иконка
-                        ZStack {
-                            Circle()
-                                .fill(Color.appButton.opacity(0.2))
-                                .frame(width: 100, height: 100)
-                            
-                            Image(systemName: "plus.circle.fill")
-                                .font(.system(size: 50))
-                                .foregroundColor(Color.appButton)
-                        }
-                        .padding(.top, 20)
-                        
+                                        
                         // Название
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Workout Name")

@@ -16,186 +16,187 @@ struct FocusTimerView: View {
         ZStack {
             Color.white
                 .ignoresSafeArea()
-            
-            VStack(spacing: 40) {
-                Spacer()
-                if !viewModel.isRunning {
-                    // Выбор длительности
-                    VStack(spacing: 30) {
-                        // Заголовок и иконка
-                        VStack(spacing: 16) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.appButton.opacity(0.2))
-                                    .frame(width: 100, height: 100)
+            ScrollView{
+                VStack(spacing: 40) {
+                    Spacer()
+                    if !viewModel.isRunning {
+                        // Выбор длительности
+                        VStack(spacing: 30) {
+                            // Заголовок и иконка
+                            VStack(spacing: 16) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.appButton.opacity(0.2))
+                                        .frame(width: 100, height: 100)
+                                    
+                                    Image(systemName: "brain.head.profile")
+                                        .font(.system(size: 50))
+                                        .foregroundColor(Color.appButton)
+                                }
                                 
-                                Image(systemName: "brain.head.profile")
-                                    .font(.system(size: 50))
-                                    .foregroundColor(Color.appButton)
-                            }
-                            
-                            Text("Select Focus Duration")
-                                .font(.system(size: 28, weight: .bold))
-                                .foregroundColor(Color.appText)
-                            
-                            Text("Choose how long you want to focus")
-                                .font(.subheadline)
-                                .foregroundColor(Color.appText.opacity(0.7))
-                                .multilineTextAlignment(.center)
-                        }
-                        .padding(.top, 20)
-                        
-                        // Карточки выбора длительности
-                        VStack(spacing: 16) {
-                            DurationCard(
-                                duration: 15,
-                                title: "Quick Focus",
-                                description: "Perfect for short breaks",
-                                icon: "bolt.fill",
-                                isSelected: selectedDuration == 15,
-                                color: Color.appButton
-                            ) {
-                                selectedDuration = 15
-                            }
-                            
-                            DurationCard(
-                                duration: 25,
-                                title: "Pomodoro",
-                                description: "Classic focus session",
-                                icon: "timer",
-                                isSelected: selectedDuration == 25,
-                                color: Color.appButton
-                            ) {
-                                selectedDuration = 25
-                            }
-                            
-                            DurationCard(
-                                duration: 45,
-                                title: "Deep Work",
-                                description: "Extended concentration",
-                                icon: "brain",
-                                isSelected: selectedDuration == 45,
-                                color: Color.appButton
-                            ) {
-                                selectedDuration = 45
-                            }
-                            
-                            DurationCard(
-                                duration: 60,
-                                title: "Intensive",
-                                description: "Maximum productivity",
-                                icon: "flame.fill",
-                                isSelected: selectedDuration == 60,
-                                color: Color.appButton
-                            ) {
-                                selectedDuration = 60
-                            }
-                        }
-                        .padding(.horizontal, 24)
-                        
-                        // Кнопка старта
-                        Button(action: {
-                            viewModel.startFocus(duration: TimeInterval(selectedDuration * 60))
-                        }) {
-                            HStack {
-                                Image(systemName: "play.circle.fill")
-                                    .font(.title2)
-                                Text("Start Focus Session")
-                                    .font(.headline)
-                                    .fontWeight(.semibold)
-                            }
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(Color.appButton)
-                            .cornerRadius(16)
-                        }
-                        .padding(.horizontal, 24)
-                        .padding(.top, 8)
-                    }
-                } else {
-                    // Таймер
-                    VStack(spacing: 30) {
-                        // Circular progress
-                        ZStack {
-                            Circle()
-                                .stroke(Color.gray.opacity(0.2), lineWidth: 20)
-                                .frame(width: 280, height: 280)
-                            
-                            Circle()
-                                .trim(from: 0, to: 1 - (viewModel.currentTime / (TimeInterval(selectedDuration * 60))))
-                                .stroke(Color.appButton, style: StrokeStyle(lineWidth: 20, lineCap: .round))
-                                .frame(width: 280, height: 280)
-                                .rotationEffect(.degrees(-90))
-                                .animation(.linear, value: viewModel.currentTime)
-                            
-                            VStack {
-                                Text(viewModel.formatTime(viewModel.currentTime))
-                                    .font(.system(size: 64, weight: .bold))
+                                Text("Select Focus Duration")
+                                    .font(.system(size: 28, weight: .bold))
                                     .foregroundColor(Color.appText)
                                 
-                                Text("Focus: \(selectedDuration) min")
-                                    .font(.title3)
+                                Text("Choose how long you want to focus")
+                                    .font(.subheadline)
                                     .foregroundColor(Color.appText.opacity(0.7))
+                                    .multilineTextAlignment(.center)
                             }
-                        }
-                        
-                        // Кнопки управления
-                        HStack(spacing: 30) {
-                            if viewModel.isPaused {
-                                Button(action: {
-                                    viewModel.resumeFocus()
-                                }) {
-                                    VStack {
-                                        Image(systemName: "play.fill")
-                                            .font(.title)
-                                        Text("Resume")
-                                            .font(.caption)
-                                    }
-                                    .foregroundColor(.white)
-                                    .frame(width: 100, height: 100)
-                                    .background(Color.appButton)
-                                    .clipShape(Circle())
+                            .padding(.top, 20)
+                            
+                            // Карточки выбора длительности
+                            VStack(spacing: 16) {
+                                DurationCard(
+                                    duration: 15,
+                                    title: "Quick Focus",
+                                    description: "Perfect for short breaks",
+                                    icon: "bolt.fill",
+                                    isSelected: selectedDuration == 15,
+                                    color: Color.appButton
+                                ) {
+                                    selectedDuration = 15
                                 }
-                            } else {
-                                Button(action: {
-                                    viewModel.pauseFocus()
-                                }) {
-                                    VStack {
-                                        Image(systemName: "pause.fill")
-                                            .font(.title)
-                                        Text("Pause")
-                                            .font(.caption)
-                                    }
-                                    .foregroundColor(.white)
-                                    .frame(width: 100, height: 100)
-                                    .background(Color.appButton)
-                                    .clipShape(Circle())
+                                
+                                DurationCard(
+                                    duration: 25,
+                                    title: "Pomodoro",
+                                    description: "Classic focus session",
+                                    icon: "timer",
+                                    isSelected: selectedDuration == 25,
+                                    color: Color.appButton
+                                ) {
+                                    selectedDuration = 25
+                                }
+                                
+                                DurationCard(
+                                    duration: 45,
+                                    title: "Deep Work",
+                                    description: "Extended concentration",
+                                    icon: "brain",
+                                    isSelected: selectedDuration == 45,
+                                    color: Color.appButton
+                                ) {
+                                    selectedDuration = 45
+                                }
+                                
+                                DurationCard(
+                                    duration: 60,
+                                    title: "Intensive",
+                                    description: "Maximum productivity",
+                                    icon: "flame.fill",
+                                    isSelected: selectedDuration == 60,
+                                    color: Color.appButton
+                                ) {
+                                    selectedDuration = 60
+                                }
+                            }
+                            .padding(.horizontal, 24)
+                            
+                            // Кнопка старта
+                            Button(action: {
+                                viewModel.startFocus(duration: TimeInterval(selectedDuration * 60))
+                            }) {
+                                HStack {
+                                    Image(systemName: "play.circle.fill")
+                                        .font(.title2)
+                                    Text("Start Focus Session")
+                                        .font(.headline)
+                                        .fontWeight(.semibold)
+                                }
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(Color.appButton)
+                                .cornerRadius(16)
+                            }
+                            .padding(.horizontal, 24)
+                            .padding(.top, 8)
+                        }
+                    } else {
+                        // Таймер
+                        VStack(spacing: 30) {
+                            // Circular progress
+                            ZStack {
+                                Circle()
+                                    .stroke(Color.gray.opacity(0.2), lineWidth: 20)
+                                    .frame(width: 280, height: 280)
+                                
+                                Circle()
+                                    .trim(from: 0, to: 1 - (viewModel.currentTime / (TimeInterval(selectedDuration * 60))))
+                                    .stroke(Color.appButton, style: StrokeStyle(lineWidth: 20, lineCap: .round))
+                                    .frame(width: 280, height: 280)
+                                    .rotationEffect(.degrees(-90))
+                                    .animation(.linear, value: viewModel.currentTime)
+                                
+                                VStack {
+                                    Text(viewModel.formatTime(viewModel.currentTime))
+                                        .font(.system(size: 64, weight: .bold))
+                                        .foregroundColor(Color.appText)
+                                    
+                                    Text("Focus: \(selectedDuration) min")
+                                        .font(.title3)
+                                        .foregroundColor(Color.appText.opacity(0.7))
                                 }
                             }
                             
-                            Button(action: {
-                                viewModel.stopFocus()
-                                dismiss()
-                            }) {
-                                VStack {
-                                    Image(systemName: "stop.fill")
-                                        .font(.title)
-                                    Text("Stop")
-                                        .font(.caption)
+                            // Кнопки управления
+                            HStack(spacing: 30) {
+                                if viewModel.isPaused {
+                                    Button(action: {
+                                        viewModel.resumeFocus()
+                                    }) {
+                                        VStack {
+                                            Image(systemName: "play.fill")
+                                                .font(.title)
+                                            Text("Resume")
+                                                .font(.caption)
+                                        }
+                                        .foregroundColor(.white)
+                                        .frame(width: 100, height: 100)
+                                        .background(Color.appButton)
+                                        .clipShape(Circle())
+                                    }
+                                } else {
+                                    Button(action: {
+                                        viewModel.pauseFocus()
+                                    }) {
+                                        VStack {
+                                            Image(systemName: "pause.fill")
+                                                .font(.title)
+                                            Text("Pause")
+                                                .font(.caption)
+                                        }
+                                        .foregroundColor(.white)
+                                        .frame(width: 100, height: 100)
+                                        .background(Color.appButton)
+                                        .clipShape(Circle())
+                                    }
                                 }
-                                .foregroundColor(.white)
-                                .frame(width: 100, height: 100)
-                                .background(Color.appButton)
-                                .clipShape(Circle())
+                                
+                                Button(action: {
+                                    viewModel.stopFocus()
+                                    dismiss()
+                                }) {
+                                    VStack {
+                                        Image(systemName: "stop.fill")
+                                            .font(.title)
+                                        Text("Stop")
+                                            .font(.caption)
+                                    }
+                                    .foregroundColor(.white)
+                                    .frame(width: 100, height: 100)
+                                    .background(Color.appButton)
+                                    .clipShape(Circle())
+                                }
                             }
                         }
                     }
+                    
+                    Spacer()
                 }
-                
-                Spacer()
+                .padding()
             }
-            .padding()
         }
         .onDisappear {
             if viewModel.isRunning {
